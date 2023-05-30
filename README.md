@@ -1,0 +1,1 @@
+# gitlab-argocd-sample-application
