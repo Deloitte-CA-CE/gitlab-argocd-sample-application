@@ -1,0 +1,33 @@
+stages:
+    - build-push
+    # - deploy-dev
+
+build:
+  stage: build-push
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+  script:
+    - echo $CI_REGISTRY_USER 
+    - echo $CI_REGISTRY_PASSWORD
+    - echo $CI_REGISTRY
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+# deploy-dev:
+#   stage: deploy-dev
+#   before_script:
+#     - git clone https://${CI_USERNAME}:${CI_PUSH_TOKEN}@gitlab.com/tfpoc/gitops.git
+#     - cd gitops
+#     - git remote set-url origin https://${CI_USERNAME}:${CI_PUSH_TOKEN}@gitlab.com/tfpoc/gitops.git
+#     - git config --global user.email "gitlab@gitlab.com"
+#     - git config --global user.name "GitLab CI/CD"
+#   script:
+#     - git checkout -B main
+#     - cd envs/dev
+#     - kustomize edit set image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+#     - cat kustomization.yaml
+#     - git commit -am "[skip ci] DEV image update"
+#     - git push origin main
+#   only:
+#     - main
